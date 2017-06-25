@@ -154,6 +154,7 @@
 
 \\{magit-tbdiff-mode-map}"
   :group 'magit-tbdiff
+  (setq-local magit-diff-highlight-trailing nil)
   (hack-dir-local-variables-non-file-buffer))
 
 
