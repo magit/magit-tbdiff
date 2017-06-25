@@ -103,7 +103,7 @@
           (magit-delete-line)
           (when (string-match-p "-" hash-a) (setq hash-a nil))
           (when (string-match-p "-" hash-b) (setq hash-b nil))
-          (magit-insert-section (tbdiff-assignment)
+          (magit-insert-section (commit (or hash-b hash-a))
             (insert
              (mapconcat
               #'identity
