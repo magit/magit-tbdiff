@@ -157,6 +157,12 @@
   (setq-local magit-diff-highlight-trailing nil)
   (hack-dir-local-variables-non-file-buffer))
 
+(defun magit-tbdiff-apply-error (&rest _args)
+  (when (derived-mode-p 'magit-tbdiff-mode)
+    (user-error "Cannot apply changes from interdiff hunk")))
+(advice-add 'magit-apply :before #'magit-tbdiff-apply-error)
+(advice-add 'magit-reverse :before #'magit-tbdiff-apply-error)
+
 
 ;;; Commands
 
