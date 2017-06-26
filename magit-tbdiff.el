@@ -3,7 +3,7 @@
 ;; Copyright (C) 2017  Kyle Meyer
 
 ;; Author: Kyle Meyer <kyle@kyleam.com>
-;; URL: https://github.com/kyleam/magit-tbdiff
+;; URL: https://github.com/magit/magit-tbdiff
 ;; Keywords: vc, tools
 ;; Version: 0.1.0
 ;; Package-Requires: ((magit "2.10.0"))
