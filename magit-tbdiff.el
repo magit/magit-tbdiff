@@ -214,6 +214,8 @@ $ git tbdiff [ARGS...] BASE..REV-A BASE..REV-B"
              (?r "Compare ranges" magit-tbdiff-ranges))
   :max-action-columns 1)
 
+;;;###autoload (autoload 'magit-tbdiff-popup "magit-tbdiff" nil t)
+
 ;;;###autoload
 (eval-after-load 'magit
   '(magit-define-popup-action 'magit-diff-popup
