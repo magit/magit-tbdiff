@@ -8,6 +8,7 @@ overview of Magit-tbdiff commands.
 
 ![Magit-tbdiff screenshot](static/screenshot.png)
 
+[badge-license]: https://img.shields.io/badge/license-GPL_3-green.svg
 [commentary]: https://github.com/kyleam/magit-tbdiff/blob/master/magit-tbdiff.el#L24
 [announcement]: https://public-inbox.org/git/87ip2pfs19.fsf@linux-k42r.v.cablecom.net/
 [homepage]: https://github.com/trast/tbdiff
