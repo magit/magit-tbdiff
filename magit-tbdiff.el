@@ -216,9 +216,8 @@ $ git tbdiff [ARGS...] BASE..REV-A BASE..REV-B"
 
 ;;;###autoload
 (eval-after-load 'magit
-  '(progn
-     (magit-define-popup-action 'magit-diff-popup
-       ?i "Interdiffs" 'magit-tbdiff-popup)))
+  '(magit-define-popup-action 'magit-diff-popup
+     ?i "Interdiffs" 'magit-tbdiff-popup))
 
 (provide 'magit-tbdiff)
 ;;; magit-tbdiff.el ends here
