@@ -128,12 +128,16 @@
              ?\n)
             (magit-insert-heading)
             (when (not (looking-at-p magit-tbdiff-assignment-re))
-              (let ((beg (point)))
+              (let ((beg (point))
+                    end)
                 (while (looking-at "^    ")
                   (magit-delete-match)
                   (forward-line 1))
+                (setq end (point))
                 (goto-char beg)
-                (magit-wash-sequence #'magit-diff-wash-hunk)))))
+                (save-restriction
+                  (narrow-to-region beg end)
+                  (magit-wash-sequence #'magit-diff-wash-hunk))))))
       (error "Unexpected tbdiff output"))))
 
 (defun magit-tbdiff-insert ()
