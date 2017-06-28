@@ -1,4 +1,5 @@
 [![License GPL 3][badge-license]](http://www.gnu.org/licenses/gpl-3.0.txt)
+[![MELPA](https://melpa.org/packages/magit-tbdiff-badge.svg)](https://melpa.org/#/magit-tbdiff)
 
 Magit-tbdiff is a Magit interface to git-tbdiff, a Git extension for
 comparing two versions of a topic branch.  See git-tbdiff's [homepage]
