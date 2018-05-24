@@ -160,7 +160,7 @@
 
 (defun magit-tbdiff-refresh-buffer (rev-a rev-b _args)
   (setq header-line-format
-        (propertize (format " Interdiffs: %s vs %s" rev-a rev-b)
+        (propertize (format " Range diff: %s vs %s" rev-a rev-b)
                     'face 'magit-header-line))
   (magit-insert-section (tbdiff-buf)
     (magit-tbdiff-insert)))
@@ -175,7 +175,7 @@
 
 (defun magit-tbdiff-apply-error (&rest _args)
   (when (derived-mode-p 'magit-tbdiff-mode)
-    (user-error "Cannot apply changes from interdiff hunk")))
+    (user-error "Cannot apply changes from range diff hunk")))
 (advice-add 'magit-apply :before #'magit-tbdiff-apply-error)
 (advice-add 'magit-reverse :before #'magit-tbdiff-apply-error)
 
