@@ -86,6 +86,10 @@
   "Face for '<' and '>' markers in tbdiff output."
   :group 'magit-tbdiff)
 
+(defvar magit-tbdiff-subcommand "tbdiff"
+  "Subcommand used to invoke tbdiff.
+Translates to 'git [global options] <subcommand> ...'.")
+
 
 ;;; Internals
 
@@ -156,7 +160,7 @@
   "Insert tbdiff output into a `magit-tbdiff-mode' buffer."
   (apply #'magit-git-wash
          #'magit-tbdiff-wash
-         "tbdiff" "--no-color" magit-refresh-args))
+         magit-tbdiff-subcommand "--no-color" magit-refresh-args))
 
 (defun magit-tbdiff-refresh-buffer (rev-a rev-b _args)
   (setq header-line-format
