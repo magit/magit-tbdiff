@@ -99,7 +99,7 @@ Translates to 'git [global options] <subcommand> ...'.")
                           (or (one-or-more digit)
                               (one-or-more "-"))))
           (hash-re '(or (repeat 4 40 (char digit (?a . ?f)))
-                        (repeat 7 "-"))))
+                        (repeat 4 40 "-"))))
       (rx-to-string `(and line-start
                           (group ,digit-re)
                           ":" (zero-or-more " ")
