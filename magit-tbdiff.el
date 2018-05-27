@@ -169,6 +169,13 @@ Translates to 'git [global options] <subcommand> ...'.")
   (magit-insert-section (tbdiff-buf)
     (magit-tbdiff-insert)))
 
+(defun magit-tbdiff-buffer-lock-value (range-a range-b _args)
+  (list range-a range-b))
+
+(when (boundp magit-buffer-lock-functions) ; Added in Magit 2.12
+  (push (cons 'magit-tbdiff-mode #'magit-tbdiff-buffer-lock-value)
+        magit-buffer-lock-functions))
+
 (define-derived-mode magit-tbdiff-mode magit-mode "Magit-tbdiff"
   "Mode for viewing git tbdiff output.
 
