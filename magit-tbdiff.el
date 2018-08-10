@@ -169,8 +169,11 @@ Translates to 'git [global options] <subcommand> ...'.")
   (magit-insert-section (tbdiff-buf)
     (magit-tbdiff-insert)))
 
-(defun magit-tbdiff-buffer-lock-value (range-a range-b _args)
-  (list range-a range-b))
+(defun magit-tbdiff-buffer-lock-value (&rest args)
+  (when (= (length args) 1)
+    ;; Magit 2.13.0-99-g48d04316 switched from `apply' to `funcall'.
+    (setq args (car args)))
+  (butlast args))
 
 (when (boundp 'magit-buffer-lock-functions) ; Added in Magit 2.12
   (push (cons 'magit-tbdiff-mode #'magit-tbdiff-buffer-lock-value)
