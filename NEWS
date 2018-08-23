@@ -2,5 +2,9 @@ Magit-tbdiff NEWS -- history of user-visible changes   -*- mode: org; -*-
 
 * master (unreleased)
 
+- Git v2.19.0 ships with a built-in analog of tbdiff, ~range-diff~!
+  The new option ~magit-tbdiff-subcommand~ can be set to "range-diff"
+  to use it instead of "tbdiff".
+
 - ~magit-tbdiff-mode~ buffers can now be locked with
   ~magit-toggle-buffer-lock~.
