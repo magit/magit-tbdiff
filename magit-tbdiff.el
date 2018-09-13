@@ -90,11 +90,18 @@
   "Face for '<' and '>' markers in tbdiff output."
   :group 'magit-tbdiff)
 
-(defcustom magit-tbdiff-subcommand "tbdiff"
+(defcustom magit-tbdiff-subcommand
+  (or (and (ignore-errors
+             (file-exists-p
+              (concat (file-name-as-directory (magit-git-str "--exec-path"))
+                      "git-range-diff")))
+           "range-diff")
+      "tbdiff")
   "Subcommand used to invoke tbdiff.
-Translates to 'git [global options] <subcommand> ...'.  If you
-have Git v2.19.0 or later, you can set this value to
-\"range-diff\" to use the built-in analog of tbdiff."
+Translates to 'git [global options] <subcommand> ...'.  The
+default is set to \"range-diff\" if git-range-diff (introduced in
+Git v2.19.0) is detected on your system and to \"tbdiff\"
+otherwise."
   :package-version '(magit-tbdiff . "0.3.0")
   :type 'string)
 
