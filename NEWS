@@ -1,6 +1,6 @@
 Magit-tbdiff NEWS -- history of user-visible changes   -*- mode: org; -*-
 
-* master (unreleased)
+* Version 0.3.0
 
 - Git v2.19.0 ships with a built-in analog of tbdiff, ~range-diff~!
   The new option ~magit-tbdiff-subcommand~ will be set to "range-diff"
