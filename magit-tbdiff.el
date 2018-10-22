@@ -66,6 +66,7 @@
 ;;; Code:
 
 (require 'magit)
+(require 'magit-popup)
 
 
 ;;; Options
