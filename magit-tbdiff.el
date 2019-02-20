@@ -254,9 +254,15 @@ $ git tbdiff [ARGS...] BASE..REV-A BASE..REV-B"
 (define-transient-command magit-tbdiff ()
   "Invoke tbdiff (or range-diff)."
   ["Arguments"
+   :if (lambda () (equal magit-tbdiff-subcommand "tbdiff"))
    ("-s" "Suppress diffs" "--no-patches")
    ;; TODO: Define custom reader.
-   ("-w" "Creation weight [default: 0.6] " "--creation-weight=")]
+   ("-w" "Creation weight [0-1, default: 0.6]" "--creation-weight=")]
+  ["Arguments"
+   :if-not (lambda () (equal magit-tbdiff-subcommand "tbdiff"))
+   ("-s" "Suppress diffs" ("-s" "--no-patch"))
+   ;; TODO: Define custom reader.
+   ("-c" "Creation factor [0-100, default: 60] " "--creation-factor=")]
   ["Actions"
    ("b" "Compare revs using common base" magit-tbdiff-revs-with-base)
    ("i" "Compare revs" magit-tbdiff-revs)

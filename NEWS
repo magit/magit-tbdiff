@@ -12,6 +12,10 @@ requires version 2.91.0 or later.
   ~-w~ because, unlike magit-popup.el, transient.el doesn't require
   that options start with '='.
 
+- The ~magit-tbdiff~ transient now supports range-diff's analogs of
+  tbdiff's ~--creation-weight~ and ~--no-patches~: ~creation-factor~
+  and ~--no-patch~.
+
 * Version 0.3.0
 
 - Git v2.19.0 ships with a built-in analog of tbdiff, ~range-diff~!
