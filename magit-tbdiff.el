@@ -39,19 +39,19 @@
 ;;     it also reads a base revision, constructing the range as
 ;;     <base>..A and <base>..B.
 ;;
-;; These commands are available in the popup `magit-tbdiff-popup',
-;; which in turn is available in the Magit diff popup, bound by
-;; default to "i" (for "interdiff" [2]).  So, with the default
-;; keybindings, you can invoke the tbdiff popup with "di".
+;; These commands are available in the transient `magit-tbdiff', which
+;; in turn is available in the Magit diff transient, bound by default
+;; to "i" (for "interdiff" [2]).  So, with the default keybindings,
+;; you can invoke the tbdiff transient with "di".
 ;;
 ;; As of v2.19.0, Git comes with the "range-diff" subcommand, an
 ;; analog of tbdiff.  The option `magit-tbdiff-subcommand' controls
 ;; which subcommand is used.
 ;;
 ;; When Magit-tbdiff is installed from MELPA, no additional setup is
-;; needed beyond installing git-tbdiff [1].  The tbdiff popup will be
-;; added under the Magit diff popup, and Magit-tbdiff will be loaded
-;; the first time that the tbdiff popup is invoked.
+;; needed beyond installing git-tbdiff [1].  The tbdiff transient will
+;; be added under the Magit diff transient, and Magit-tbdiff will be
+;; loaded the first time that the tbdiff transient is invoked.
 ;;
 ;; [1] https://github.com/trast/tbdiff
 
@@ -66,7 +66,7 @@
 ;;; Code:
 
 (require 'magit)
-(require 'magit-popup)
+(require 'transient)
 
 
 ;;; Options
@@ -218,7 +218,7 @@ otherwise."
 $ git tbdiff [ARGS...] RANGE-A RANGE-B"
   (interactive (list (magit-read-range "Range A")
                      (magit-read-range "Range B")
-                     (magit-tbdiff-arguments)))
+                     (transient-args)))
   (magit-mode-setup #'magit-tbdiff-mode range-a range-b args))
 
 ;;;###autoload
@@ -229,7 +229,7 @@ $ git tbdiff [ARGS...] REV-B..REV-A REV-A..REV-B"
    (let ((rev-a (magit-read-branch-or-commit "Revision A")))
      (list rev-a
            (magit-read-other-branch-or-commit "Revision B" rev-a)
-           (magit-tbdiff-arguments))))
+           (transient-args))))
   (magit-tbdiff-ranges (concat rev-b ".." rev-a)
                        (concat rev-a ".." rev-b)
                        args))
@@ -245,29 +245,28 @@ $ git tbdiff [ARGS...] BASE..REV-A BASE..REV-B"
            (magit-read-branch-or-commit "Base"
                                         (or (magit-get-upstream-branch rev-b)
                                             (magit-get-upstream-branch rev-a)))
-           (magit-tbdiff-arguments))))
+           (transient-args))))
   (magit-tbdiff-ranges (concat base ".." rev-a)
                        (concat base ".." rev-b)
                        args))
 
-;;;###autoload (autoload 'magit-tbdiff-popup "magit-tbdiff" nil t)
-(magit-define-popup magit-tbdiff-popup
-  "Popup console for git tbdiff."
-  'magit-popups
-  :switches '((?s "Suppress diffs" "--no-patches"))
-  :options '((?w "Creation weight [default: 0.6]" "--creation-weight="))
-  :actions '((?b "Compare revs using common base" magit-tbdiff-revs-with-base)
-             (?i "Compare revs" magit-tbdiff-revs)
-             (?r "Compare ranges" magit-tbdiff-ranges))
-  :max-action-columns 1)
+;;;###autoload (autoload 'magit-tbdiff "magit-tbdiff" nil t)
+(define-transient-command magit-tbdiff ()
+  "Invoke tbdiff (or range-diff)."
+  ["Arguments"
+   ("-s" "Suppress diffs" "--no-patches")
+   ;; TODO: Define custom reader.
+   ("-w" "Creation weight [default: 0.6] " "--creation-weight=")]
+  ["Actions"
+   ("b" "Compare revs using common base" magit-tbdiff-revs-with-base)
+   ("i" "Compare revs" magit-tbdiff-revs)
+   ("r" "Compare ranges" magit-tbdiff-ranges)])
 
 ;;;###autoload
 (eval-after-load 'magit
   '(progn
-     (require 'magit-popup)
-     (when (boundp 'magit-diff-popup)
-       (magit-define-popup-action 'magit-diff-popup
-         ?i "Interdiffs" 'magit-tbdiff-popup))))
+     (transient-append-suffix 'magit-diff "p"
+       '("i" "Interdiffs" magit-tbdiff))))
 
 (provide 'magit-tbdiff)
 ;;; magit-tbdiff.el ends here

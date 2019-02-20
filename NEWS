@@ -1,5 +1,17 @@
 Magit-tbdiff NEWS -- history of user-visible changes   -*- mode: org; -*-
 
+* master (unreleased)
+
+Magit-tbdiff has been updated for the latest version of Magit and now
+requires version 2.91.0 or later.
+
+- To be compatible with the latest Magit, ~magit-tbdiff-popup~ has
+  been rewritten as a transient command, ~magit-tbdiff~.
+
+  The key bindings for ~--creation-weight~ has changed from ~=w~ to
+  ~-w~ because, unlike magit-popup.el, transient.el doesn't require
+  that options start with '='.
+
 * Version 0.3.0
 
 - Git v2.19.0 ships with a built-in analog of tbdiff, ~range-diff~!
