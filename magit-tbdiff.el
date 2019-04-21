@@ -110,6 +110,14 @@ otherwise."
 
 ;;; Internals
 
+(define-derived-mode magit-tbdiff-mode magit-mode "Magit-tbdiff"
+  "Mode for viewing range diffs.
+
+\\{magit-tbdiff-mode-map}"
+  :group 'magit-tbdiff
+  (setq-local magit-diff-highlight-trailing nil)
+  (hack-dir-local-variables-non-file-buffer))
+
 (defvar magit-tbdiff-assignment-re
   (eval-when-compile
     (let ((digit-re '(and (zero-or-more " ")  ; Retain left padding.
@@ -195,14 +203,6 @@ otherwise."
 (when (boundp 'magit-buffer-lock-functions) ; Added in Magit 2.12
   (push (cons 'magit-tbdiff-mode #'magit-tbdiff-buffer-lock-value)
         magit-buffer-lock-functions))
-
-(define-derived-mode magit-tbdiff-mode magit-mode "Magit-tbdiff"
-  "Mode for viewing range diffs.
-
-\\{magit-tbdiff-mode-map}"
-  :group 'magit-tbdiff
-  (setq-local magit-diff-highlight-trailing nil)
-  (hack-dir-local-variables-non-file-buffer))
 
 (defun magit-tbdiff-apply-error (&rest _args)
   (when (derived-mode-p 'magit-tbdiff-mode)
