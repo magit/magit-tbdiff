@@ -1,4 +1,4 @@
-;;; magit-tbdiff.el --- Magit extension for git-tbdiff  -*- lexical-binding: t; -*-
+;;; magit-tbdiff.el --- Magit extension for range diffs  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2017-2019  Kyle Meyer
 
@@ -23,10 +23,11 @@
 
 ;;; Commentary:
 ;;
-;; Magit-tbdiff provides a Magit interface to git-tbdiff [1], a Git
-;; extension for comparing two versions of a topic branch.
+;; Magit-tbdiff provides a Magit interface to git-tbdiff [1] and
+;; git-range-diff, subcommands for comparing two versions of a topic
+;; branch.
 ;;
-;; There are three commands for calling git-tbdiff:
+;; There are three commands for creating range diffs:
 ;;
 ;;   * `magit-tbdiff-ranges' is the most generic of the three
 ;;     commands.  It reads two ranges that represent the two series to
@@ -72,23 +73,23 @@
 ;;; Options
 
 (defgroup magit-tbdiff nil
-  "Magit extension for git-tbdiff"
+  "Magit extension for git-tbdiff and git-range-diff"
   :prefix "magit-tbdiff"
   :group 'magit-extensions)
 
 (defface magit-tbdiff-marker-equivalent
   '((t (:inherit magit-cherry-equivalent)))
-  "Face for '=' marker in tbdiff output."
+  "Face for '=' marker in assignment line."
   :group 'magit-tbdiff)
 
 (defface magit-tbdiff-marker-different
   '((t (:inherit magit-cherry-unmatched)))
-  "Face for '!' marker in tbdiff output."
+  "Face for '!' marker in assignment line."
   :group 'magit-tbdiff)
 
 (defface magit-tbdiff-marker-unmatched
   '((t (:inherit magit-cherry-unmatched)))
-  "Face for '<' and '>' markers in tbdiff output."
+  "Face for '<' and '>' markers in assignment line."
   :group 'magit-tbdiff)
 
 (defcustom magit-tbdiff-subcommand
@@ -98,7 +99,7 @@
                       "git-range-diff")))
            "range-diff")
       "tbdiff")
-  "Subcommand used to invoke tbdiff.
+  "Subcommand used to create range diff.
 Translates to 'git [global options] <subcommand> ...'.  The
 default is set to \"range-diff\" if git-range-diff (introduced in
 Git v2.19.0) is detected on your system and to \"tbdiff\"
@@ -173,7 +174,7 @@ otherwise."
       (error "Unexpected tbdiff output"))))
 
 (defun magit-tbdiff-insert ()
-  "Insert tbdiff output into a `magit-tbdiff-mode' buffer."
+  "Insert range diff into a `magit-tbdiff-mode' buffer."
   (apply #'magit-git-wash
          #'magit-tbdiff-wash
          magit-tbdiff-subcommand "--no-color" magit-refresh-args))
@@ -196,7 +197,7 @@ otherwise."
         magit-buffer-lock-functions))
 
 (define-derived-mode magit-tbdiff-mode magit-mode "Magit-tbdiff"
-  "Mode for viewing git tbdiff output.
+  "Mode for viewing range diffs.
 
 \\{magit-tbdiff-mode-map}"
   :group 'magit-tbdiff
@@ -215,7 +216,7 @@ otherwise."
 ;;;###autoload
 (defun magit-tbdiff-ranges (range-a range-b &optional args)
   "Compare commits in RANGE-A with those in RANGE-B.
-$ git tbdiff [ARGS...] RANGE-A RANGE-B"
+$ git range-diff [ARGS...] RANGE-A RANGE-B"
   (interactive (list (magit-read-range "Range A")
                      (magit-read-range "Range B")
                      (transient-args)))
@@ -224,7 +225,7 @@ $ git tbdiff [ARGS...] RANGE-A RANGE-B"
 ;;;###autoload
 (defun magit-tbdiff-revs (rev-a rev-b &optional args)
   "Compare commits in REV-B..REV-A with those in REV-A..REV-B.
-$ git tbdiff [ARGS...] REV-B..REV-A REV-A..REV-B"
+$ git range-diff [ARGS...] REV-B..REV-A REV-A..REV-B"
   (interactive
    (let ((rev-a (magit-read-branch-or-commit "Revision A")))
      (list rev-a
@@ -237,7 +238,7 @@ $ git tbdiff [ARGS...] REV-B..REV-A REV-A..REV-B"
 ;;;###autoload
 (defun magit-tbdiff-revs-with-base (rev-a rev-b base &optional args)
   "Compare commits in BASE..REV-A with those in BASE..REV-B.
-$ git tbdiff [ARGS...] BASE..REV-A BASE..REV-B"
+$ git range-diff [ARGS...] BASE..REV-A BASE..REV-B"
   (interactive
    (let* ((rev-a (magit-read-branch-or-commit "Revision A"))
           (rev-b (magit-read-other-branch-or-commit "Revision B" rev-a)))
