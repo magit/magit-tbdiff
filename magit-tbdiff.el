@@ -66,6 +66,7 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'magit)
 (require 'transient)
 
@@ -109,6 +110,9 @@ otherwise."
 
 
 ;;; Internals
+
+(defvar-local magit-tbdiff-buffer-range-a nil)
+(defvar-local magit-tbdiff-buffer-range-b nil)
 
 (define-derived-mode magit-tbdiff-mode magit-mode "Magit-tbdiff"
   "Mode for viewing range diffs.
@@ -185,24 +189,27 @@ otherwise."
   "Insert range diff into a `magit-tbdiff-mode' buffer."
   (apply #'magit-git-wash
          #'magit-tbdiff-wash
-         magit-tbdiff-subcommand "--no-color" magit-refresh-args))
+         magit-tbdiff-subcommand "--no-color"
+         magit-tbdiff-buffer-range-a magit-tbdiff-buffer-range-b
+         magit-buffer-arguments))
 
-(defun magit-tbdiff-refresh-buffer (rev-a rev-b _args)
+(defun magit-tbdiff-setup-buffer (range-a range-b args)
+  (magit-setup-buffer #'magit-tbdiff-mode nil
+    (magit-tbdiff-buffer-range-a range-a)
+    (magit-tbdiff-buffer-range-b range-b)
+    (magit-buffer-arguments args)))
+
+(defun magit-tbdiff-refresh-buffer ()
   (setq header-line-format
-        (propertize (format " Range diff: %s vs %s" rev-a rev-b)
+        (propertize (format " Range diff: %s vs %s"
+                            magit-tbdiff-buffer-range-a
+                            magit-tbdiff-buffer-range-b)
                     'face 'magit-header-line))
   (magit-insert-section (tbdiff-buf)
     (magit-tbdiff-insert)))
 
-(defun magit-tbdiff-buffer-lock-value (&rest args)
-  (when (= (length args) 1)
-    ;; Magit 2.13.0-99-g48d04316 switched from `apply' to `funcall'.
-    (setq args (car args)))
-  (butlast args))
-
-(when (boundp 'magit-buffer-lock-functions) ; Added in Magit 2.12
-  (push (cons 'magit-tbdiff-mode #'magit-tbdiff-buffer-lock-value)
-        magit-buffer-lock-functions))
+(cl-defmethod magit-buffer-value (&context (major-mode magit-tbdiff-mode))
+  (list magit-tbdiff-buffer-range-a magit-tbdiff-buffer-range-b))
 
 (defun magit-tbdiff-apply-error (&rest _args)
   (when (derived-mode-p 'magit-tbdiff-mode)
@@ -220,7 +227,7 @@ $ git range-diff [ARGS...] RANGE-A RANGE-B"
   (interactive (list (magit-read-range "Range A")
                      (magit-read-range "Range B")
                      (transient-args)))
-  (magit-mode-setup #'magit-tbdiff-mode range-a range-b args))
+  (magit-tbdiff-setup-buffer range-a range-b args))
 
 ;;;###autoload
 (defun magit-tbdiff-revs (rev-a rev-b &optional args)
