@@ -140,7 +140,31 @@ otherwise."
                           (group (zero-or-more not-newline)))
                     t))))
 
-(defun magit-tbdiff-wash (_args)
+;; range-diff's --dual-color inverts the color of the outer diff
+;; markers.  Map this to boxed text.
+(face-spec-set 'magit-tbdiff-dual-color '((t (:box t))))
+(defvar magit-tbdiff-ansi-color-map
+  (let ((ansi-color-faces-vector (copy-sequence ansi-color-faces-vector)))
+    (aset ansi-color-faces-vector 7 'magit-tbdiff-dual-color)
+    (ansi-color-make-color-map)))
+
+(defun magit-tbdiff-wash (args)
+  (when (member "--dual-color" args)
+    (require 'ansi-color)
+    (let ((ansi-color-map magit-tbdiff-ansi-color-map)
+          end-pt)
+      (goto-char (point-max))
+      (goto-char (line-beginning-position))
+      ;; Paint ANSI escape sequences in hunks while removing them from
+      ;; the assignment lines.
+      (while (zerop (forward-line -1))
+        (if (looking-at-p "^ ")
+            (unless end-pt
+              (setq end-pt (line-end-position)))
+          (when end-pt
+            (ansi-color-apply-on-region (1+ (line-end-position)) end-pt)
+            (setq end-pt nil))
+          (ansi-color-filter-region (point) (line-end-position))))))
   (while (not (eobp))
     (if (looking-at magit-tbdiff-assignment-re)
         (magit-bind-match-strings
@@ -187,11 +211,20 @@ otherwise."
 
 (defun magit-tbdiff-insert ()
   "Insert range diff into a `magit-tbdiff-mode' buffer."
-  (apply #'magit-git-wash
-         #'magit-tbdiff-wash
-         magit-tbdiff-subcommand "--no-color"
-         magit-tbdiff-buffer-range-a magit-tbdiff-buffer-range-b
-         magit-buffer-arguments))
+  (let ((magit-git-global-arguments
+         (append (list "-c" "color.diff.context=normal"
+                       "-c" "color.diff.frag=normal"
+                       "-c" "color.diff.func=normal"
+                       "-c" "color.diff.whitespace=normal")
+                 magit-git-global-arguments)))
+    (apply #'magit-git-wash
+           #'magit-tbdiff-wash
+           magit-tbdiff-subcommand
+           (if (member "--dual-color" magit-buffer-arguments)
+               "--color"
+             "--no-color")
+           magit-tbdiff-buffer-range-a magit-tbdiff-buffer-range-b
+           magit-buffer-arguments)))
 
 (defun magit-tbdiff-setup-buffer (range-a range-b args)
   (magit-setup-buffer #'magit-tbdiff-mode nil
@@ -268,6 +301,7 @@ $ git range-diff [ARGS...] BASE..REV-A BASE..REV-B"
    ("-w" "Creation weight [0-1, default: 0.6]" "--creation-weight=")]
   ["Arguments"
    :if-not (lambda () (equal magit-tbdiff-subcommand "tbdiff"))
+   ("-d" "Dual color" "--dual-color")
    ("-s" "Suppress diffs" ("-s" "--no-patch"))
    ;; TODO: Define custom reader.
    ("-c" "Creation factor [0-100, default: 60] " "--creation-factor=")]

@@ -16,6 +16,9 @@ requires version 2.91.0 or later.
   tbdiff's ~--creation-weight~ and ~--no-patches~: ~creation-factor~
   and ~--no-patch~.
 
+- The ~--dual-color~ switch for ~range-diff~ and ~tbdiff~ is now
+  supported.
+
 * Version 0.3.0
 
 - Git v2.19.0 ships with a built-in analog of tbdiff, ~range-diff~!
