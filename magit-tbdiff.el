@@ -259,7 +259,7 @@ otherwise."
 $ git range-diff [ARGS...] RANGE-A RANGE-B"
   (interactive (list (magit-read-range "Range A")
                      (magit-read-range "Range B")
-                     (transient-args)))
+                     (transient-args 'magit-tbdiff)))
   (magit-tbdiff-setup-buffer range-a range-b args))
 
 ;;;###autoload
@@ -270,7 +270,7 @@ $ git range-diff [ARGS...] REV-B..REV-A REV-A..REV-B"
    (let ((rev-a (magit-read-branch-or-commit "Revision A")))
      (list rev-a
            (magit-read-other-branch-or-commit "Revision B" rev-a)
-           (transient-args))))
+           (transient-args 'magit-tbdiff))))
   (magit-tbdiff-ranges (concat rev-b ".." rev-a)
                        (concat rev-a ".." rev-b)
                        args))
@@ -286,7 +286,7 @@ $ git range-diff [ARGS...] BASE..REV-A BASE..REV-B"
            (magit-read-branch-or-commit "Base"
                                         (or (magit-get-upstream-branch rev-b)
                                             (magit-get-upstream-branch rev-a)))
-           (transient-args))))
+           (transient-args 'magit-tbdiff))))
   (magit-tbdiff-ranges (concat base ".." rev-a)
                        (concat base ".." rev-b)
                        args))
