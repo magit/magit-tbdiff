@@ -61,8 +61,6 @@
 ;;     technically one.  Sorry.
 ;;
 ;;     https://public-inbox.org/git/nycvar.QRO.7.76.6.1805062155120.77@tvgsbejvaqbjf.bet/#t
-;;
-;; [3] https://public-inbox.org/git/87ip2pfs19.fsf@linux-k42r.v.cablecom.net/
 
 ;;; Code:
 
