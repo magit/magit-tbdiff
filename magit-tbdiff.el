@@ -321,7 +321,7 @@ $ git range-diff [ARGS...] BASE..REV-A BASE..REV-B"
   (magit-refresh))
 
 ;;;###autoload (autoload 'magit-tbdiff "magit-tbdiff" nil t)
-(define-transient-command magit-tbdiff ()
+(transient-define-prefix magit-tbdiff ()
   "Invoke tbdiff (or range-diff)."
   ["Arguments"
    :if (lambda () (equal magit-tbdiff-subcommand "tbdiff"))
