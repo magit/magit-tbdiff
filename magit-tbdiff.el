@@ -156,6 +156,8 @@ otherwise."
       (magit-insert-section section (hunk value)
         (insert (propertize (concat heading "\n")
                             'font-lock-face 'magit-diff-hunk-heading))
+        (when dual-color
+          (remove-overlays (line-beginning-position 0) (line-end-position 0)))
         (magit-insert-heading)
         (while (not (or (eobp) (looking-at "^[^-+\s\\]")))
           (forward-line))
