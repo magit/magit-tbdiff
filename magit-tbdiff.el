@@ -146,14 +146,16 @@ otherwise."
     (aset ansi-color-faces-vector 7 'magit-tbdiff-dual-color)
     (ansi-color-make-color-map)))
 
-(defun magit-tbdiff-wash-hunk ()
-  ;; The is a less strict variant of magit-diff-wash-hunk that we need
-  ;; for range-diff output changes introduced by Git 2.23.0.
+(defun magit-tbdiff-wash-hunk (&optional dual-color)
+  ;; Note: This hunk matching is less strict than what is in
+  ;; `magit-diff-wash-hunk' to accommodate range-diff output changes
+  ;; introduced by Git 2.23.0.
   (when (looking-at "^@@\\(?: \\(.*\\)\\)?")
     (let ((heading (match-string 0))
           (value (match-string 1)))
       (magit-delete-line)
-      (magit-insert-section section (hunk value)
+      (magit-insert-section section ((eval (if dual-color 'tbdiff-hunk 'hunk))
+                                     value)
         (insert (propertize (concat heading "\n")
                             'font-lock-face 'magit-diff-hunk-heading))
         (when dual-color
@@ -162,69 +164,72 @@ otherwise."
         (while (not (or (eobp) (looking-at "^[^-+\s\\]")))
           (forward-line))
         (oset section end (point))
-        (oset section washer 'magit-diff-paint-hunk)))
+        (unless dual-color
+          (oset section washer 'magit-diff-paint-hunk))))
     t))
 
 (defun magit-tbdiff-wash (args)
-  (when (member "--dual-color" args)
-    (require 'ansi-color)
-    (let ((ansi-color-map magit-tbdiff-ansi-color-map)
-          end-pt)
-      (goto-char (point-max))
-      (goto-char (line-beginning-position))
-      ;; Paint ANSI escape sequences in hunks while removing them from
-      ;; the assignment lines.
-      (while (zerop (forward-line -1))
-        (if (looking-at-p "^ ")
-            (unless end-pt
-              (setq end-pt (line-end-position)))
-          (when end-pt
-            (ansi-color-apply-on-region (1+ (line-end-position)) end-pt)
-            (setq end-pt nil))
-          (ansi-color-filter-region (point) (line-end-position))))))
-  (while (not (eobp))
-    (if (looking-at magit-tbdiff-assignment-re)
-        (magit-bind-match-strings
-            (num-a hash-a marker num-b hash-b subject) nil
-          (magit-delete-line)
-          (when (string-match-p "-" hash-a) (setq hash-a nil))
-          (when (string-match-p "-" hash-b) (setq hash-b nil))
-          (magit-insert-section (commit (or hash-b hash-a))
-            (insert
-             (mapconcat
-              #'identity
-              (list num-a
-                    (if hash-a
-                        (propertize hash-a 'face 'magit-hash)
-                      (make-string (length hash-b) ?-))
-                    (propertize marker
-                                'face
-                                (pcase marker
-                                  ("=" 'magit-tbdiff-marker-equivalent)
-                                  ("!" 'magit-tbdiff-marker-different)
-                                  ((or "<" ">") 'magit-tbdiff-marker-different)
-                                  (_
-                                   (error "Unrecognized marker"))))
-                    num-b
-                    (if hash-b
-                        (propertize hash-b 'face 'magit-hash)
-                      (make-string (length hash-a) ?-))
-                    subject)
-              " ")
-             ?\n)
-            (magit-insert-heading)
-            (when (not (looking-at-p magit-tbdiff-assignment-re))
-              (let ((beg (point))
-                    end)
-                (while (looking-at "^    ")
-                  (magit-delete-match)
-                  (forward-line 1))
-                (setq end (point))
-                (goto-char beg)
-                (save-restriction
-                  (narrow-to-region beg end)
-                  (magit-wash-sequence #'magit-tbdiff-wash-hunk))))))
-      (error "Unexpected tbdiff output"))))
+  (let* ((dual-color (member "--dual-color" args))
+         (hunk-wash-fn (lambda () (magit-tbdiff-wash-hunk dual-color))))
+    (when dual-color
+      (require 'ansi-color)
+      (let ((ansi-color-map magit-tbdiff-ansi-color-map)
+            end-pt)
+        (goto-char (point-max))
+        (goto-char (line-beginning-position))
+        ;; Paint ANSI escape sequences in hunks while removing them from
+        ;; the assignment lines.
+        (while (zerop (forward-line -1))
+          (if (looking-at-p "^ ")
+              (unless end-pt
+                (setq end-pt (line-end-position)))
+            (when end-pt
+              (ansi-color-apply-on-region (1+ (line-end-position)) end-pt)
+              (setq end-pt nil))
+            (ansi-color-filter-region (point) (line-end-position))))))
+    (while (not (eobp))
+      (if (looking-at magit-tbdiff-assignment-re)
+          (magit-bind-match-strings
+              (num-a hash-a marker num-b hash-b subject) nil
+            (magit-delete-line)
+            (when (string-match-p "-" hash-a) (setq hash-a nil))
+            (when (string-match-p "-" hash-b) (setq hash-b nil))
+            (magit-insert-section (commit (or hash-b hash-a))
+              (insert
+               (mapconcat
+                #'identity
+                (list num-a
+                      (if hash-a
+                          (propertize hash-a 'face 'magit-hash)
+                        (make-string (length hash-b) ?-))
+                      (propertize marker
+                                  'face
+                                  (pcase marker
+                                    ("=" 'magit-tbdiff-marker-equivalent)
+                                    ("!" 'magit-tbdiff-marker-different)
+                                    ((or "<" ">") 'magit-tbdiff-marker-different)
+                                    (_
+                                     (error "Unrecognized marker"))))
+                      num-b
+                      (if hash-b
+                          (propertize hash-b 'face 'magit-hash)
+                        (make-string (length hash-a) ?-))
+                      subject)
+                " ")
+               ?\n)
+              (magit-insert-heading)
+              (when (not (looking-at-p magit-tbdiff-assignment-re))
+                (let ((beg (point))
+                      end)
+                  (while (looking-at "^    ")
+                    (magit-delete-match)
+                    (forward-line 1))
+                  (setq end (point))
+                  (goto-char beg)
+                  (save-restriction
+                    (narrow-to-region beg end)
+                    (magit-wash-sequence hunk-wash-fn))))))
+        (error "Unexpected tbdiff output")))))
 
 (defun magit-tbdiff-insert ()
   "Insert range diff into a `magit-tbdiff-mode' buffer."
