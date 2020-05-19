@@ -16,8 +16,7 @@ requires version 3.0.0 or later.
   tbdiff's ~--creation-weight~ and ~--no-patches~: ~creation-factor~
   and ~--no-patch~.
 
-- The ~--dual-color~ switch for ~range-diff~ and ~tbdiff~ is now
-  supported.
+- The ~--dual-color~ switch for ~range-diff~ is now supported.
 
 - New command ~magit-tbdiff-save~ (inspired by ~magit-patch-save~)
   writes the range-diff output to a file.
