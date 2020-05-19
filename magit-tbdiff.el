@@ -230,8 +230,6 @@ otherwise."
   "Insert range diff into a `magit-tbdiff-mode' buffer."
   (let ((magit-git-global-arguments
          (append (list "-c" "color.diff.context=normal"
-                       "-c" "color.diff.frag=normal"
-                       "-c" "color.diff.func=normal"
                        "-c" "color.diff.whitespace=normal")
                  magit-git-global-arguments)))
     (apply #'magit-git-wash
