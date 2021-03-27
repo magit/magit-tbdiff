@@ -338,6 +338,7 @@ $ git range-diff [ARGS...] BASE..REV-A BASE..REV-B"
    :if-not (lambda () (equal magit-tbdiff-subcommand "tbdiff"))
    ("-d" "Dual color" "--dual-color")
    ("-s" "Suppress diffs" ("-s" "--no-patch"))
+   (5 "-N" "Suppress notes diff" "--no-notes")
    (5 "-l" "Exclude commits not in left range" "--left-only"
     :if (lambda () (version<= "2.31" (magit-git-version))))
    (5 "-r" "Exclude commits not in right range" "--right-only"

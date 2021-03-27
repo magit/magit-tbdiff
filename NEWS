@@ -18,8 +18,9 @@ requires version 3.0.0 or later.
 
 - The ~--dual-color~ switch for ~range-diff~ is now supported.
 
-- The ~--(left|right)-only~ (new in Git 2.31) switches for
-  ~range-diff~ are now supported but are disabled by default.
+- The ~--(left|right)-only~ (new in Git 2.31) and ~--no-notes~ (new in
+  Git 2.25) switches for ~range-diff~ are now supported but are
+  disabled by default.
 
 - New command ~magit-tbdiff-save~ (inspired by ~magit-patch-save~)
   writes the range-diff output to a file.
