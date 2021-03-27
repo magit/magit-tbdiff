@@ -328,6 +328,7 @@ $ git range-diff [ARGS...] BASE..REV-A BASE..REV-B"
 ;;;###autoload (autoload 'magit-tbdiff "magit-tbdiff" nil t)
 (transient-define-prefix magit-tbdiff ()
   "Invoke tbdiff (or range-diff)."
+  :incompatible '(("--left-only" "--right-only"))
   ["Arguments"
    :if (lambda () (equal magit-tbdiff-subcommand "tbdiff"))
    ("-s" "Suppress diffs" "--no-patches")
@@ -337,6 +338,10 @@ $ git range-diff [ARGS...] BASE..REV-A BASE..REV-B"
    :if-not (lambda () (equal magit-tbdiff-subcommand "tbdiff"))
    ("-d" "Dual color" "--dual-color")
    ("-s" "Suppress diffs" ("-s" "--no-patch"))
+   (5 "-l" "Exclude commits not in left range" "--left-only"
+    :if (lambda () (version<= "2.31" (magit-git-version))))
+   (5 "-r" "Exclude commits not in right range" "--right-only"
+    :if (lambda () (version<= "2.31" (magit-git-version))))
    ;; TODO: Define custom reader.
    ("-c" "Creation factor [0-100, default: 60] " "--creation-factor=")]
   ["Actions"
