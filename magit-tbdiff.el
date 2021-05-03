@@ -322,7 +322,7 @@ $ git range-diff [ARGS...] BASE..REV-A BASE..REV-B"
     (with-temp-file file
       (magit-git-insert magit-tbdiff-subcommand
                         range-a range-b
-                        (cl-remove "--dual-color" args :test #'equal))))
+                        (remove "--dual-color" args))))
   (magit-refresh))
 
 ;;;###autoload (autoload 'magit-tbdiff "magit-tbdiff" nil t)
