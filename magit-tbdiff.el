@@ -64,6 +64,7 @@
 
 ;;; Code:
 
+(require 'ansi-color)
 (require 'cl-lib)
 (require 'magit)
 (require 'transient)
@@ -141,10 +142,35 @@ otherwise."
 ;; range-diff's --dual-color inverts the color of the outer diff
 ;; markers.  Map this to boxed text.
 (face-spec-set 'magit-tbdiff-dual-color '((t (:box t))))
+(defvar magit-tbdiff--color-vector
+  (let ((new (copy-sequence
+              (cond ((boundp 'ansi-color-basic-faces-vector)
+                     ansi-color-basic-faces-vector)
+                    ;; Emacs <28.
+                    ((boundp 'ansi-color-faces-vector)
+                     ansi-color-faces-vector)
+                    (t (error "This should be unreachable"))))))
+    (aset new 7 'magit-tbdiff-dual-color)
+    new))
+
 (defvar magit-tbdiff-ansi-color-map
-  (let ((ansi-color-faces-vector (copy-sequence ansi-color-faces-vector)))
-    (aset ansi-color-faces-vector 7 'magit-tbdiff-dual-color)
-    (ansi-color-make-color-map)))
+  (cond
+   ((boundp 'ansi-color-basic-faces-vector) nil)
+   ;; Emacs <28.
+   ((and (fboundp 'ansi-color-make-color-map)
+         (boundp 'ansi-color-faces-vector))
+    (let ((ansi-color-faces-vector magit-tbdiff--color-vector))
+      (ansi-color-make-color-map)))
+   (t (error "This should be unreachable"))))
+
+(defmacro magit-tbdiff--with-ansi-colors (&rest body)
+  (declare (indent 0) (debug (body)))
+  (if (boundp 'ansi-color-basic-faces-vector)
+      `(let ((ansi-color-basic-faces-vector magit-tbdiff--color-vector))
+         ,@body)
+    ;; Emacs <28.
+    `(let ((ansi-color-map magit-tbdiff-ansi-color-map))
+       ,@body)))
 
 (defun magit-tbdiff-wash-hunk (&optional dual-color)
   ;; Note: This hunk matching is less strict than what is in
@@ -172,21 +198,20 @@ otherwise."
   (let* ((dual-color (member "--dual-color" args))
          (hunk-wash-fn (lambda () (magit-tbdiff-wash-hunk dual-color))))
     (when dual-color
-      (require 'ansi-color)
-      (let ((ansi-color-map magit-tbdiff-ansi-color-map)
-            end-pt)
+      (let (end-pt)
         (goto-char (point-max))
         (goto-char (line-beginning-position))
         ;; Paint ANSI escape sequences in hunks while removing them from
         ;; the assignment lines.
-        (while (zerop (forward-line -1))
-          (if (looking-at-p "^ ")
-              (unless end-pt
-                (setq end-pt (line-end-position)))
-            (when end-pt
-              (ansi-color-apply-on-region (1+ (line-end-position)) end-pt)
-              (setq end-pt nil))
-            (ansi-color-filter-region (point) (line-end-position))))))
+        (magit-tbdiff--with-ansi-colors
+         (while (zerop (forward-line -1))
+           (if (looking-at-p "^ ")
+               (unless end-pt
+                 (setq end-pt (line-end-position)))
+             (when end-pt
+               (ansi-color-apply-on-region (1+ (line-end-position)) end-pt)
+               (setq end-pt nil))
+             (ansi-color-filter-region (point) (line-end-position)))))))
     (while (not (eobp))
       (if (looking-at magit-tbdiff-assignment-re)
           (magit-bind-match-strings
