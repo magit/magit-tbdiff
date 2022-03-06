@@ -5,7 +5,7 @@
 ;; Author: Kyle Meyer <kyle@kyleam.com>
 ;; URL: https://github.com/magit/magit-tbdiff
 ;; Keywords: vc, tools
-;; Version: 1.1.0
+;; Version: 1.1.1
 ;; Package-Requires: ((emacs "25.1") (magit "3.0.0"))
 
 ;; This program is free software; you can redistribute it and/or modify

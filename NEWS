@@ -1,5 +1,10 @@
 Magit-tbdiff NEWS -- history of user-visible changes   -*- mode: org; -*-
 
+* Version 1.1.1
+
+Adapt ansi-color usage to work with Emacs 28 while retaining
+compatibility with older Emacs versions.
+
 * Version 1.1.0
 
 Magit-tbdiff has been updated for the latest version of Magit and now
