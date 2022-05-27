@@ -100,7 +100,7 @@
            "range-diff")
       "tbdiff")
   "Subcommand used to create range diff.
-Translates to 'git [global options] <subcommand> ...'.  The
+Translates to \"git [global options] <subcommand> ...\".  The
 default is set to \"range-diff\" if git-range-diff (introduced in
 Git v2.19.0) is detected on your system and to \"tbdiff\"
 otherwise."
