@@ -1,6 +1,6 @@
 Magit-tbdiff NEWS -- history of user-visible changes   -*- mode: org; -*-
 
-* master (unreleased)
+* Version 1.2.0
 
 Magit-tbdiff now requires Magit version 4.0.0 or later.
 
