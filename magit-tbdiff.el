@@ -60,7 +60,7 @@
 ;;     and that what tbdiff refers to as an "interdiff" isn't
 ;;     technically one.  Sorry.
 ;;
-;;     https://public-inbox.org/git/nycvar.QRO.7.76.6.1805062155120.77@tvgsbejvaqbjf.bet/#t
+;;     https://lore.kernel.org/git/nycvar.QRO.7.76.6.1805062155120.77@tvgsbejvaqbjf.bet/#t
 
 ;;; Code:
 
