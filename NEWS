@@ -1,5 +1,9 @@
 Magit-tbdiff NEWS -- history of user-visible changes   -*- mode: org; -*-
 
+* master (unreleased)
+
+Magit-tbdiff now requires Magit version 4.0.0 or later.
+
 * Version 1.1.1
 
 Adapt ansi-color usage to work with Emacs 28 while retaining
