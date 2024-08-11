@@ -55,7 +55,7 @@
 ;; loaded the first time that the tbdiff transient is invoked.
 ;;
 ;; [1] https://github.com/trast/tbdiff
-
+;;
 ;; [2] When I selected that key, I didn't know what an interdiff was
 ;;     and that what tbdiff refers to as an "interdiff" isn't
 ;;     technically one.  Sorry.
