@@ -189,9 +189,7 @@ otherwise."
         (magit-insert-heading)
         (while (not (or (eobp) (looking-at "^[^-+\s\\]")))
           (forward-line))
-        (oset section end (point))
-        (unless dual-color
-          (oset section washer 'magit-diff-paint-hunk))))
+        (oset section end (point))))
     t))
 
 (defun magit-tbdiff-wash (args)
