@@ -1,6 +1,6 @@
 ;;; magit-tbdiff.el --- Magit extension for range diffs  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2017-2024 all Magit-tbdiff contributors
+;; Copyright (C) 2017-2026 all Magit-tbdiff contributors
 
 ;; Author: Kyle Meyer <kyle@kyleam.com>
 ;; URL: https://github.com/magit/magit-tbdiff
