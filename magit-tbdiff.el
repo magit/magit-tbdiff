@@ -112,6 +112,7 @@ otherwise."
 
 (defvar-local magit-tbdiff-buffer-range-a nil)
 (defvar-local magit-tbdiff-buffer-range-b nil)
+(defvar-local magit-tbdiff-buffer-args nil)
 
 (define-derived-mode magit-tbdiff-mode magit-mode "Magit-tbdiff"
   "Mode for viewing range diffs.
@@ -263,17 +264,17 @@ otherwise."
     (apply #'magit-git-wash
            #'magit-tbdiff-wash
            magit-tbdiff-subcommand
-           (if (member "--dual-color" magit-buffer-arguments)
+           (if (member "--dual-color" magit-tbdiff-buffer-args)
                "--color"
              "--no-color")
            magit-tbdiff-buffer-range-a magit-tbdiff-buffer-range-b
-           magit-buffer-arguments)))
+           magit-tbdiff-buffer-args)))
 
 (defun magit-tbdiff-setup-buffer (range-a range-b args)
   (magit-setup-buffer #'magit-tbdiff-mode nil
     (magit-tbdiff-buffer-range-a range-a)
     (magit-tbdiff-buffer-range-b range-b)
-    (magit-buffer-arguments args)))
+    (magit-tbdiff-buffer-args args)))
 
 (defun magit-tbdiff-refresh-buffer ()
   (setq header-line-format
@@ -341,7 +342,7 @@ $ git range-diff [ARGS...] BASE..REV-A BASE..REV-B"
     (user-error "Current buffer is not a `magit-tbdiff-mode' buffer"))
   (let ((range-a magit-tbdiff-buffer-range-a)
         (range-b magit-tbdiff-buffer-range-b)
-        (args magit-buffer-arguments))
+        (args magit-tbdiff-buffer-args))
     (with-temp-file file
       (magit-git-insert magit-tbdiff-subcommand
                         range-a range-b
