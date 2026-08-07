@@ -179,7 +179,7 @@ otherwise."
   ;; introduced by Git 2.23.0.
   (when (looking-at "^@@\\(?: \\(.*\\)\\)?")
     (let ((heading (match-string 0))
-          (value (match-string 1)))
+          (value (list (match-string 1))))
       (magit-delete-line)
       (magit-insert-section section ((eval (if dual-color 'tbdiff-hunk 'hunk))
                                      value)
